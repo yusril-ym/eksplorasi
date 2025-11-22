@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerasiyu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Nunito', sans-serif; }
+        h1, h2, h3 { font-family: 'Comic Neue', cursive; }
+        
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Sidebar Navigation Styles */
+        .nav-item {
+            transition: all 0.2s;
+            border-right: 4px solid transparent;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            background-color: #EEF2FF; /* Indigo 50 */
+            color: #4F46E5; /* Indigo 600 */
+            border-right: 4px solid #4F46E5;
+        }
+        .nav-item:hover:not(.active):not(.locked) {
+            background-color: #F3F4F6;
+        }
+        
+        /* LOCKED STATE STYLES */
+        .nav-item.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #f9fafb;
+            color: #9ca3af;
+        }
+        .nav-item.locked:hover {
+            background-color: #f9fafb; /* No hover effect for locked */
+        }
+
+        /* Input styling for simulation */
+        .sim-input {
+            transition: all 0.3s;
+        }
+        .sim-input:focus {
+            transform: scale(1.05);
+            border-color: #4F46E5;
+        }
+        
+        /* Custom Scrollbar for main content */
+        .main-content::-webkit-scrollbar { width: 8px; }
+        .main-content::-webkit-scrollbar-track { background: #f1f1f1; }
+        .main-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-64 bg-white shadow-xl z-20 flex flex-col hidden md:flex">
+        <div class="p-6 bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
+            <div class="flex items-center gap-2 mb-1">
+                <i class="fa-solid fa-chart-pie text-2xl text-yellow-300"></i>
+                <h1 class="text-2xl font-bold">Jago Data</h1>
+            </div>
+            <p class="text-xs text-blue-100">Kelas 5 SD</p>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4" id="sidebar-nav">
+            <!-- Buttons will be managed by JS for locking state -->
+            <button onclick="tryNavigate('intro')" class="nav-item w-full text-left px-6 py-4 font-bold flex items-center justify-between active" id="nav-intro">
+                <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-house"></i></span> Beranda</span>
+            </button>
+            <button onclick="tryNavigate('konsep')" class="nav-item w-full text-left px-6 py-4 font-bold flex items-center justify-between locked" id="nav-konsep">
+                <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-lightbulb"></i></span> 1. Konsep Data</span>
+                <i class="fa-solid fa-lock text-xs lock-icon"></i>
+            </button>
+            <button onclick="tryNavigate('penyajian')" class="nav-item w-full text-left px-6 py-4 font-bold flex items-center justify-between locked" id="nav-penyajian">
+                <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-table"></i></span> 2. Penyajian Data</span>
+                <i class="fa-solid fa-lock text-xs lock-icon"></i>
+            </button>
+            <button onclick="tryNavigate('pemusatan')" class="nav-item w-full text-left px-6 py-4 font-bold flex items-center justify-between locked" id="nav-pemusatan">
+                <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-calculator"></i></span> 3. Pemusatan (3M)</span>
+                <i class="fa-solid fa-lock text-xs lock-icon"></i>
+            </button>
+            <button onclick="tryNavigate('kuis')" class="nav-item w-full text-left px-6 py-4 font-bold flex items-center justify-between locked" id="nav-kuis">
+                <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-graduation-cap"></i></span> Kuis HOTS</span>
+                <i class="fa-solid fa-lock text-xs lock-icon"></i>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t bg-gray-50">
+             <button onclick="resetProgress()" class="text-xs text-red-400 hover:text-red-600 w-full text-center"><i class="fa-solid fa-rotate-left mr-1"></i> Reset Progress Belajar</button>
+        </div>
+    </aside>
+
+    <!-- MOBILE HEADER -->
+    <div class="md:hidden fixed top-0 w-full bg-indigo-600 text-white z-50 p-4 flex justify-between items-center shadow-md">
+        <span class="font-bold text-lg"><i class="fa-solid fa-chart-pie mr-2 text-yellow-300"></i>Jago Data</span>
+        <button onclick="document.querySelector('aside').classList.toggle('hidden'); document.querySelector('aside').classList.toggle('absolute'); document.querySelector('aside').classList.toggle('h-full');" class="text-white focus:outline-none">
+            <i class="fa-solid fa-bars text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 bg-blue-50 h-full overflow-y-auto main-content p-4 md:p-8 pt-20 md:pt-8 relative">
+        
+        <!-- SECTION: INTRO -->
+        <section id="intro" class="content-section fade-in max-w-4xl mx-auto">
+            <div class="bg-white rounded-3xl shadow-lg overflow-hidden">
+                <div class="bg-indigo-600 h-32 flex items-center justify-center relative">
+                    <i class="fa-solid fa-database text-9xl text-white opacity-10 absolute top-4"></i>
+                    <h2 class="text-4xl text-white font-bold relative z-10">Selamat Datang!</h2>
+                </div>
+                <div class="p-8 text-center space-y-6">
+                    <p class="text-xl text-gray-600">Halo Sobat Data! Siap berpetualang menjadi ahli statistik cilik? <br> Selesaikan setiap misi untuk membuka materi selanjutnya!</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="p-4 bg-green-50 rounded-xl border border-green-200">
+                            <i class="fa-solid fa-magnifying-glass text-3xl text-green-500 mb-2"></i>
+                            <h3 class="font-bold text-green-700">1. Kumpulkan</h3>
+                            <p class="text-sm">Pelajari apa itu data.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                            <i class="fa-solid fa-chart-column text-3xl text-blue-500 mb-2"></i>
+                            <h3 class="font-bold text-blue-700">2. Sajikan</h3>
+                            <p class="text-sm">Buat grafik interaktif.</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                            <i class="fa-solid fa-brain text-3xl text-purple-500 mb-2"></i>
+                            <h3 class="font-bold text-purple-700">3. Analisis</h3>
+                            <p class="text-sm">Hitung rata-rata & modus.</p>
+                        </div>
+                    </div>
+                    <!-- COMPLETION BUTTON FOR INTRO -->
+                    <button onclick="completeSection(0)" class="mt-6 bg-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:bg-indigo-700 transition transform hover:scale-105 shadow-lg flex items-center mx-auto">
+                        Mulai Belajar <i class="fa-solid fa-lock-open ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: KONSEP DATA -->
+        <section id="konsep" class="content-section hidden fade-in max-w-5xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-green-500">
+                <h2 class="text-2xl font-bold text-green-700 mb-4"><i class="fa-solid fa-book mr-2"></i>Apa itu Data?</h2>
+                <p class="text-lg leading-relaxed text-gray-700 mb-4">
+                    **Data** adalah kumpulan informasi atau fakta yang benar dan nyata. Data ibarat "bahan mentah" yang belum diolah.
+                </p>
+                
+                <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4">Jenis Data (Analogi Koki Restoran)</h3>
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    
+                    <!-- KOLOM DATA PRIMER -->
+                    <div class="bg-orange-50 p-6 rounded-xl border-2 border-orange-200 relative flex flex-col">
+                        <div class="absolute -top-4 -right-4 bg-orange-500 text-white w-10 h-10 flex items-center justify-center rounded-full font-bold shadow">1</div>
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="bg-white p-3 rounded-full shadow"><i class="fa-solid fa-user-pen text-2xl text-orange-600"></i></div>
+                            <h4 class="text-xl font-bold text-orange-700">Data Primer</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow"><strong>Definisi:</strong> Data yang kamu ambil atau kumpulkan SENDIRI secara langsung.</p>
+                        <div class="bg-white p-3 rounded-lg text-sm italic text-gray-500 border-l-4 border-orange-400 mb-4">
+                            <p class="font-bold not-italic text-orange-600 mb-1">Analogi Koki:</p>
+                            "Koki memetik tomat segar langsung dari kebun."
+                        </div>
+
+                        <!-- MISI DATA PRIMER (VIDEO) -->
+                        <div class="bg-white p-4 rounded-lg border border-orange-200 shadow-sm text-center">
+                            <h5 class="font-bold text-orange-800 mb-2 text-sm"><i class="fa-brands fa-youtube mr-1 text-red-600"></i> Misi: Observasi Langsung</h5>
+                            <p class="text-xs text-gray-600 mb-3">Ayo bertamasya ke kebun binatang Numerasiyu. <strong>Amati</strong> apa saja dan berapa banyak koleksinya lalu sajikan hasilnya pada LKPD!</p>
+                            
+                            <p class="text-xs font-bold text-orange-600 mt-2 bg-orange-100 py-1 px-2 rounded inline-block">Kegiatan: Melihat & Menghitung (Observasi)</p>
+                        </div>
+                    </div>
+
+                    <!-- KOLOM DATA SEKUNDER -->
+                    <div class="bg-purple-50 p-6 rounded-xl border-2 border-purple-200 relative flex flex-col">
+                        <div class="absolute -top-4 -right-4 bg-purple-500 text-white w-10 h-10 flex items-center justify-center rounded-full font-bold shadow">2</div>
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="bg-white p-3 rounded-full shadow"><i class="fa-solid fa-copy text-2xl text-purple-600"></i></div>
+                            <h4 class="text-xl font-bold text-purple-700">Data Sekunder</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow"><strong>Definisi:</strong> Data yang diperoleh dari sumber yang SUDAH ADA (orang lain).</p>
+                        <div class="bg-white p-3 rounded-lg text-sm italic text-gray-500 border-l-4 border-purple-400 mb-4">
+                            <p class="font-bold not-italic text-purple-600 mb-1">Analogi Koki:</p>
+                            "Koki membeli saus kalengan yang sudah jadi dari pabrik."
+                        </div>
+
+                        <!-- MISI DATA SEKUNDER (VIDEO) -->
+                        <div class="bg-white p-4 rounded-lg border border-purple-200 shadow-sm text-center">
+                            <h5 class="font-bold text-purple-800 mb-2 text-sm"><i class="fa-brands fa-youtube mr-1 text-red-600"></i> Misi: Menyimak Berita</h5>
+                            <p class="text-xs text-gray-600 mb-3">Tonton video laporan ini. <strong>Catat angka</strong> yang disebutkan oleh penyiar berita!</p>
+                            
+                            <!-- YouTube Frame Container (Responsive) -->
+                            <div class="relative pb-[56.25%] h-0 overflow-hidden rounded-lg bg-black shadow-inner">
+<iframe :src="https://github.com/yusril-ym/eksplorasi/blob/main/materi.m4v" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+</iframe>                             
+
+                            </div>
+                            <p class="text-xs font-bold text-purple-600 mt-2 bg-purple-100 py-1 px-2 rounded inline-block">Kegiatan: Mencatat Data Siap Pakai</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPLETION BUTTON FOR KONSEP -->
+                <div class="text-center pt-4 border-t">
+                    <p class="mb-2 text-gray-500 text-sm">Sudah paham perbedaan cara mengambil data?</p>
+                    <button onclick="completeSection(1)" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold hover:bg-green-700 transition transform hover:scale-105 shadow-lg flex items-center mx-auto">
+                        Lanjut ke Penyajian Data <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PENYAJIAN DATA (SIMULASI RANDOM) -->
+        <section id="penyajian" class="content-section hidden fade-in max-w-5xl mx-auto space-y-6">
+            <!-- Story Card -->
+            <div class="bg-gradient-to-r from-green-600 to-teal-500 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
+                <i class="fa-solid fa-hippo text-9xl absolute -right-10 -bottom-10 opacity-20"></i>
+                <h2 class="text-2xl font-bold mb-2"><i class="fa-solid fa-map-location-dot mr-2"></i>Misi: Tamasya ke Numerasiyu</h2>
+                <p class="text-lg opacity-90 max-w-3xl">
+                    Hari ini siswa kelas 5 bertamasya ke kebun binatang Numerasiyu. Berikut hasil pengamatan hewan yang tercatat di buku mereka:
+                </p>
+                
+                <!-- Data List Grid (Static Reference) -->
+                <div class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 text-sm" id="story-data-list">
+                   <!-- Will be populated by JS for consistency, or static -->
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-feather text-yellow-200 mr-2"></i>7 Elang Jawa</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-dove text-pink-200 mr-2"></i>15 Cendrawasih</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-dragon text-green-200 mr-2"></i>5 Iguana</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-lizard text-emerald-200 mr-2"></i>3 Komodo</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-staff-snake text-purple-200 mr-2"></i>10 Ular Piton</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-cat text-orange-200 mr-2"></i>4 Harimau</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-paw text-amber-200 mr-2"></i>9 Singa</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-fish text-cyan-200 mr-2"></i>6 Lumba-lumba</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-water text-blue-200 mr-2"></i>2 Paus</span>
+                    <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-shield-dog text-lime-200 mr-2"></i>1 Kura-kura</span>
+                </div>
+
+                <div class="mt-4 bg-black/20 inline-block px-4 py-2 rounded-lg border border-white/20 shadow-sm">
+                    <p class="text-sm font-bold flex items-center">
+                        <i class="fa-solid fa-dice mr-2 text-yellow-300 animate-spin-slow"></i>
+                        <span id="mission-task-text">Misi Acak: Masukkan data untuk ...</span>
+                    </p>
+                </div>
+                <button onclick="setupRandomSimulation()" class="absolute top-6 right-6 bg-white text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow hover:bg-green-50 transition z-10">
+                    <i class="fa-solid fa-rotate mr-1"></i> Acak Misi
+                </button>
+            </div>
+
+            <!-- Interactive Simulation Area (Dynamic Content) -->
+            <div class="bg-white rounded-2xl shadow-md p-6" id="simulation-container">
+                <!-- Content will be injected by JS -->
+            </div>
+            
+            <!-- COMPLETION BUTTON FOR PENYAJIAN -->
+            <div class="text-center mt-6">
+                <p class="mb-2 text-gray-500 text-sm">Sudah mahir membuat grafik?</p>
+                <button onclick="completeSection(2)" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition transform hover:scale-105 shadow-lg flex items-center mx-auto">
+                    Lanjut ke Pemusatan Data <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 3: PEMUSATAN DATA (3M) -->
+        <section id="pemusatan" class="content-section hidden fade-in max-w-5xl mx-auto space-y-6">
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border-t-4 border-blue-500 shadow hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold text-blue-700 mb-2">Mean (Rata-rata)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Nilai perwakilan jika semua data dibagi rata.</p>
+                    <div class="bg-blue-50 p-2 rounded text-xs text-center font-mono">Jumlah Data ÷ Banyak Data</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border-t-4 border-purple-500 shadow hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold text-purple-700 mb-2">Median (Tengah)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Nilai yang posisinya tepat di tengah antrian.</p>
+                    <div class="bg-purple-50 p-2 rounded text-xs text-center font-bold">Syarat: Urutkan dari kecil ke besar!</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border-t-4 border-green-500 shadow hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold text-green-700 mb-2">Modus (Terbanyak)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Nilai yang paling sering muncul (populer).</p>
+                    <div class="bg-green-50 p-2 rounded text-xs text-center font-bold">Cari angka dengan jumlah terbanyak.</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-gray-800 p-4 text-white flex justify-between items-center">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-calculator mr-2"></i>Simulator Skor Tim Basket</h3>
+                    <span class="text-xs bg-gray-700 px-2 py-1 rounded">Edit angka di kartu!</span>
+                </div>
+                <div class="p-6 md:p-8">
+                    <p class="mb-6 text-gray-600 text-center">Tim Basket SD Ceria bertanding 5 kali. Berikut adalah skor poin yang mereka peroleh. <br><strong>Ubah skornya untuk melihat perubahan Mean, Median, dan Modus!</strong></p>
+                    <div class="flex flex-wrap justify-center gap-4 mb-8">
+                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 1</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="6" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 2</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="8" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 3</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="6" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 4</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="10" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 5</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="5" oninput="calculateStats()"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200"><div class="text-xs uppercase font-bold text-blue-500 mb-1">Rata-rata (Mean)</div><div class="text-3xl font-black text-blue-700" id="res-mean">7</div><div class="text-xs text-blue-400 mt-2" id="res-mean-calc">Total 35 ÷ 5</div></div>
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-200"><div class="text-xs uppercase font-bold text-purple-500 mb-1">Nilai Tengah (Median)</div><div class="text-3xl font-black text-purple-700" id="res-median">6</div><div class="text-xs text-purple-400 mt-2" id="res-median-calc">Urutan: 5, 6, 6, 8, 10</div></div>
+                        <div class="p-4 bg-green-50 rounded-xl border border-green-200"><div class="text-xs uppercase font-bold text-green-500 mb-1">Terbanyak (Modus)</div><div class="text-3xl font-black text-green-700" id="res-modus">6</div><div class="text-xs text-green-400 mt-2" id="res-modus-calc">Muncul 2 kali</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMPLETION BUTTON FOR PEMUSATAN -->
+            <div class="text-center mt-6">
+                <p class="mb-2 text-gray-500 text-sm">Sudah siap ujian?</p>
+                <button onclick="completeSection(3)" class="bg-purple-600 text-white px-8 py-3 rounded-full font-bold hover:bg-purple-700 transition transform hover:scale-105 shadow-lg flex items-center mx-auto">
+                    Siap, Lanjut ke Kuis! <i class="fa-solid fa-flag-checkered ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION: KUIS -->
+        <section id="kuis" class="content-section hidden fade-in max-w-4xl mx-auto pb-10">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="bg-indigo-600 p-6 text-white text-center">
+                    <h2 class="text-3xl font-bold mb-2"><i class="fa-solid fa-graduation-cap mr-2"></i>Kuis HOTS</h2>
+                    <p class="opacity-90">Uji pemahamanmu! Ingat materi yang sudah dipelajari.</p>
+                </div>
+                <div class="p-6 md:p-10 bg-gray-50">
+                    <form id="quiz-form" class="space-y-8">
+                        <div id="questions-container"></div>
+                        <div class="flex justify-center pt-6">
+                            <button type="button" onclick="submitQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-4 px-12 rounded-full shadow-lg transform transition hover:scale-105 flex items-center">
+                                <i class="fa-solid fa-paper-plane mr-3"></i> Kirim Jawaban
+                            </button>
+                        </div>
+                    </form>
+                    <div id="result-container" class="hidden mt-8 text-center space-y-6">
+                        <div class="inline-block p-6 rounded-full bg-white shadow-xl border-8 border-indigo-100">
+                            <div class="text-lg text-gray-500 uppercase font-bold tracking-widest">Skor Kamu</div>
+                            <div id="score-display" class="text-6xl font-black text-indigo-600">0</div>
+                            <div class="text-gray-400 text-sm">dari 100</div>
+                        </div>
+                        <div id="feedback-text" class="text-xl font-bold text-gray-700"></div>
+                        <button onclick="location.reload()" class="text-indigo-600 hover:underline font-bold">Coba Lagi</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- 0. LOCKING SYSTEM LOGIC ---
+        const sectionsOrder = ['intro', 'konsep', 'penyajian', 'pemusatan', 'kuis'];
+        // Get progress from storage or default to 0 (Only Intro Unlocked)
+        let maxUnlocked = parseInt(localStorage.getItem('jagoDataProgress')) || 0;
+
+        function updateSidebarVisuals() {
+            sectionsOrder.forEach((secId, index) => {
+                const btn = document.getElementById('nav-' + secId);
+                const iconSpan = btn.querySelector('.lock-icon');
+                
+                if (index <= maxUnlocked) {
+                    btn.classList.remove('locked');
+                    if(iconSpan) iconSpan.className = 'hidden'; // Hide lock
+                } else {
+                    btn.classList.add('locked');
+                    if(iconSpan) iconSpan.className = 'fa-solid fa-lock text-xs lock-icon'; // Show lock
+                    else {
+                        // If visual was removed previously (rare case in this logic but good safety)
+                         const i = document.createElement('i');
+                         i.className = 'fa-solid fa-lock text-xs lock-icon';
+                         btn.appendChild(i);
+                    }
+                }
+            });
+        }
+
+        function tryNavigate(sectionId) {
+            const index = sectionsOrder.indexOf(sectionId);
+            if (index <= maxUnlocked) {
+                showSection(sectionId);
+            } else {
+                // Optional: Add a shake animation or tooltip saying "Locked"
+                const btn = document.getElementById('nav-' + sectionId);
+                btn.classList.add('animate-pulse');
+                setTimeout(() => btn.classList.remove('animate-pulse'), 500);
+            }
+        }
+
+        function completeSection(currentIndex) {
+            // Unlock next section
+            if (currentIndex >= maxUnlocked) {
+                maxUnlocked = currentIndex + 1;
+                if(maxUnlocked >= sectionsOrder.length) maxUnlocked = sectionsOrder.length - 1;
+                localStorage.setItem('jagoDataProgress', maxUnlocked);
+                updateSidebarVisuals();
+            }
+            // Auto navigate to next
+            if (currentIndex + 1 < sectionsOrder.length) {
+                showSection(sectionsOrder[currentIndex + 1]);
+            }
+        }
+
+        function resetProgress() {
+            if(confirm("Apakah kamu yakin ingin mengulang dari awal? Progress akan dihapus.")) {
+                localStorage.setItem('jagoDataProgress', 0);
+                maxUnlocked = 0;
+                updateSidebarVisuals();
+                showSection('intro');
+            }
+        }
+
+        // --- 1. NAVIGATION LOGIC (UPDATED) ---
+        function showSection(sectionId) {
+            // Verify access again just in case
+            const index = sectionsOrder.indexOf(sectionId);
+            if(index > maxUnlocked) return;
+
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(sectionId);
+            if(target) target.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if(activeNav) activeNav.classList.add('active');
+            
+            if(sectionId === 'pemusatan') calculateStats();
+            
+            // Scroll to top on nav
+            document.querySelector('main').scrollTo(0,0);
+        }
+
+        // --- 2. RANDOM CHART SIMULATION LOGIC ---
+        const zooData = [
+            { id: 'elang', name: 'Elang Jawa', count: 7, icon: 'fa-feather', color: 'yellow', tailwind: 'yellow' },
+            { id: 'cendrawasih', name: 'Cendrawasih', count: 15, icon: 'fa-dove', color: 'pink', tailwind: 'pink' },
+            { id: 'iguana', name: 'Iguana', count: 5, icon: 'fa-dragon', color: 'green', tailwind: 'green' },
+            { id: 'komodo', name: 'Komodo', count: 3, icon: 'fa-lizard', color: 'emerald', tailwind: 'emerald' },
+            { id: 'ular', name: 'Ular Piton', count: 10, icon: 'fa-staff-snake', color: 'purple', tailwind: 'purple' },
+            { id: 'harimau', name: 'Harimau', count: 4, icon: 'fa-cat', color: 'orange', tailwind: 'orange' },
+            { id: 'singa', name: 'Singa', count: 9, icon: 'fa-paw', color: 'amber', tailwind: 'amber' },
+            { id: 'lumba', name: 'Lumba-lumba', count: 6, icon: 'fa-fish', color: 'cyan', tailwind: 'cyan' },
+            { id: 'paus', name: 'Paus', count: 2, icon: 'fa-water', color: 'blue', tailwind: 'blue' },
+            { id: 'kura', name: 'Kura-kura', count: 1, icon: 'fa-shield-dog', color: 'lime', tailwind: 'lime' }
+        ];
+
+        let currentMission = [];
+
+        function setupRandomSimulation() {
+            const shuffled = [...zooData].sort(() => 0.5 - Math.random());
+            currentMission = shuffled.slice(0, 3);
+
+            const missionText = `Tugasmu: Masukkan data untuk <strong>${currentMission[0].name}, ${currentMission[1].name}, dan ${currentMission[2].name}</strong>!`;
+            document.getElementById('mission-task-text').innerHTML = missionText;
+
+            const container = document.getElementById('simulation-container');
+            
+            let inputsHTML = `<div class="grid grid-cols-3 gap-4 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-200">`;
+            let tableRowsHTML = '';
+            let pictogramRowsHTML = '';
+            let chartBarsHTML = '';
+            let chartLabelsHTML = '';
+
+            currentMission.forEach(animal => {
+                inputsHTML += `
+                    <div class="text-center">
+                        <label class="block text-sm font-bold text-${animal.tailwind}-600 mb-1 whitespace-nowrap overflow-hidden text-ellipsis"><i class="fa-solid ${animal.icon} mr-1"></i>${animal.name}</label>
+                        <input type="number" id="input-${animal.id}" value="0" min="0" max="20" oninput="updateCharts()" class="sim-input w-full text-center text-xl font-bold p-2 rounded border border-gray-300 shadow-inner focus:outline-none focus:ring-2 focus:ring-${animal.tailwind}-500">
+                    </div>
+                `;
+
+                tableRowsHTML += `
+                    <tr>
+                        <td class="p-2 font-bold text-${animal.tailwind}-600 text-xs md:text-sm">${animal.name}</td>
+                        <td class="p-2 text-xs text-gray-500 tracking-tighter" id="turus-${animal.id}">-</td>
+                        <td class="p-2 font-bold" id="val-${animal.id}">0</td>
+                    </tr>
+                `;
+
+                pictogramRowsHTML += `
+                    <div class="flex items-center border-b border-dashed pb-1">
+                        <span class="w-20 text-xs font-bold text-${animal.tailwind}-600 flex-shrink-0">${animal.name}</span>
+                        <div id="picto-${animal.id}" class="flex flex-wrap gap-1"></div>
+                    </div>
+                `;
+
+                chartBarsHTML += `
+                    <div class="w-8 md:w-12 bg-gradient-to-t from-${animal.tailwind}-600 to-${animal.tailwind}-300 rounded-t transition-all duration-500 relative shadow-lg group" id="bar-${animal.id}" style="height: 0%;">
+                        <span class="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-bold text-${animal.tailwind}-700">0</span>
+                    </div>
+                `;
+                
+                chartLabelsHTML += `<span class="text-center w-1/3 px-1 truncate">${animal.name}</span>`;
+            });
+            inputsHTML += `</div>`;
+
+            container.innerHTML = `
+                <h3 class="text-xl font-bold text-gray-700 mb-6 text-center">Laboratorium Penyajian Data</h3>
+                ${inputsHTML}
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <!-- TABLE -->
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-center mb-2 text-blue-800">1. Tabel Frekuensi</h4>
+                        <table class="w-full bg-white rounded-lg overflow-hidden text-sm shadow-sm">
+                            <thead class="bg-blue-600 text-white">
+                                <tr><th>Hewan</th><th>Turus</th><th>Jml</th></tr>
+                            </thead>
+                            <tbody class="text-center divide-y">${tableRowsHTML}</tbody>
+                        </table>
+                    </div>
+
+                    <!-- PICTOGRAM -->
+                    <div class="bg-pink-50 p-4 rounded-xl border border-pink-100">
+                        <h4 class="font-bold text-center mb-2 text-pink-800">2. Piktogram</h4>
+                        <p class="text-xs text-center mb-2 bg-white rounded p-1 border border-pink-200">1 Ikon = 1 Ekor</p>
+                        <div class="space-y-2 bg-white p-3 rounded-lg shadow-inner h-56 overflow-y-auto">
+                            ${pictogramRowsHTML}
+                        </div>
+                    </div>
+
+                    <!-- BAR CHART -->
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex flex-col">
+                        <h4 class="font-bold text-center mb-2 text-indigo-800">3. Diagram Batang</h4>
+                        <div class="flex flex-row items-end">
+                             <div class="h-56 flex items-center justify-center -mr-1">
+                                <span class="text-[10px] font-bold text-gray-600 -rotate-90 whitespace-nowrap w-4">Frekuensi Data</span>
+                             </div>
+                            <div class="flex flex-col justify-between h-56 text-[10px] text-gray-600 text-right pr-2 pb-6 pt-2 w-8">
+                                <span>20</span><span>15</span><span>10</span><span>5</span><span>0</span>
+                            </div>
+                            <div class="flex-1 h-56 relative">
+                                 <div class="absolute top-2 left-0 w-full h-[calc(100%-1.5rem)] flex flex-col justify-between pointer-events-none z-0">
+                                    <div class="border-b border-gray-300 w-full h-0 border-dashed"></div>
+                                    <div class="border-b border-gray-300 w-full h-0 border-dashed"></div>
+                                    <div class="border-b border-gray-300 w-full h-0 border-dashed"></div>
+                                    <div class="border-b border-gray-300 w-full h-0 border-dashed"></div>
+                                    <div class="border-b border-gray-300 w-full h-0 border-dashed"></div>
+                                 </div>
+                                <div class="absolute left-0 top-2 bottom-6 w-0.5 bg-gray-800 z-10"></div>
+                                <div class="absolute left-0 right-0 bottom-6 h-0.5 bg-gray-800 z-10"></div>
+                                <div class="absolute left-0 top-2 right-0 bottom-6 flex items-end justify-around px-2 z-20">
+                                    ${chartBarsHTML}
+                                </div>
+                                <div class="absolute bottom-0 left-0 w-full h-6 flex items-center justify-around text-[10px] font-bold text-gray-600">
+                                    ${chartLabelsHTML}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-[10px] font-bold text-gray-600 mt-1">Kategori Data (Hewan)</div>
+                    </div>
+                </div>
+            `;
+
+            updateCharts();
+        }
+
+        function updateCharts() {
+            if(currentMission.length === 0) return;
+            let values = currentMission.map(animal => {
+                const el = document.getElementById(`input-${animal.id}`);
+                return el ? parseInt(el.value) || 0 : 0;
+            });
+            const maxVal = Math.max(...values, 20);
+
+            currentMission.forEach((animal, index) => {
+                const val = values[index];
+                const valEl = document.getElementById(`val-${animal.id}`);
+                if(valEl) valEl.innerText = val;
+                const turusEl = document.getElementById(`turus-${animal.id}`);
+                if(turusEl) turusEl.innerText = generateTurus(val);
+                const pictoEl = document.getElementById(`picto-${animal.id}`);
+                if(pictoEl) pictoEl.innerHTML = generateIcons(`fa-solid ${animal.icon} text-${animal.tailwind}-500`, val);
+                const barEl = document.getElementById(`bar-${animal.id}`);
+                if(barEl) {
+                    const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                    barEl.style.height = pct + "%";
+                    barEl.querySelector('span').innerText = val;
+                }
+            });
+        }
+
+        function generateTurus(n) {
+            let turus = "";
+            for(let i=0; i<n; i++) {
+                if((i+1)%5 === 0) turus += "/ ";
+                else turus += "|";
+            }
+            return turus || "-";
+        }
+
+        function generateIcons(iconClass, count) {
+            let html = "";
+            for(let i=0; i<count; i++) {
+                html += `<i class="${iconClass} text-lg"></i>`;
+            }
+            return html;
+        }
+
+        // --- 3. STATS CALCULATOR LOGIC ---
+        function calculateStats() {
+            const inputs = document.querySelectorAll('.score-input');
+            let values = [];
+            inputs.forEach(input => values.push(parseInt(input.value) || 0));
+
+            const sum = values.reduce((a, b) => a + b, 0);
+            const mean = values.length > 0 ? (sum / values.length).toFixed(1).replace('.0', '') : 0;
+            document.getElementById('res-mean').innerText = mean;
+            document.getElementById('res-mean-calc').innerText = `Total ${sum} ÷ ${values.length}`;
+
+            const sorted = [...values].sort((a, b) => a - b);
+            let median = 0;
+            if (sorted.length > 0) {
+                const mid = Math.floor(sorted.length / 2);
+                if (sorted.length % 2 !== 0) median = sorted[mid];
+                else median = (sorted[mid - 1] + sorted[mid]) / 2;
+            }
+            document.getElementById('res-median').innerText = median;
+            document.getElementById('res-median-calc').innerText = `Urutan: ${sorted.join(', ')}`;
+
+            const frequency = {};
+            let maxFreq = 0;
+            let modes = [];
+            values.forEach(val => {
+                frequency[val] = (frequency[val] || 0) + 1;
+                if (frequency[val] > maxFreq) maxFreq = frequency[val];
+            });
+            for (const key in frequency) {
+                if (frequency[key] === maxFreq) modes.push(key);
+            }
+            
+            if (maxFreq <= 1 && values.length > 1 && new Set(values).size === values.length) {
+                 document.getElementById('res-modus').innerText = "-";
+                 document.getElementById('res-modus-calc').innerText = "Tidak ada (semua sama)";
+            } else {
+                document.getElementById('res-modus').innerText = modes.join(', ');
+                document.getElementById('res-modus-calc').innerText = `Muncul ${maxFreq} kali`;
+            }
+        }
+
+        // --- 4. QUIZ LOGIC ---
+        const questions = [
+            { type: 'mc', q: "Andi mengukur tinggi badan adiknya sendiri menggunakan meteran. Data yang diperoleh Andi termasuk...", options: ["Data Sekunder", "Data Primer", "Data Tersier", "Data Laporan"], answer: 1, explanation: "Karena Andi mengambil data itu sendiri secara langsung (seperti Koki memetik tomat)." },
+            { type: 'mc', q: "Manakah di bawah ini yang merupakan contoh Data Sekunder?", options: ["Mewawancarai pedagang pasar", "Menghitung jumlah mobil yang lewat", "Mencatat ulang data absensi dari buku guru", "Mengukur suhu air dengan termometer"], answer: 2, explanation: "Menyalin dari buku guru berarti sumbernya sudah ada (Sekunder)." },
+            { type: 'mc', q: "Berdasarkan data panen: 2019 (40), 2020 (55), 2021 (35), 2022 (60). Pernyataan yang SALAH adalah...", options: ["Panen terendah tahun 2021", "Terjadi penurunan dari 2020 ke 2021", "Panen tertinggi tahun 2019", "Total panen 2020 dan 2021 adalah 90"], answer: 2, explanation: "Panen tertinggi adalah tahun 2022 (60), bukan 2019 (40)." },
+            { type: 'mc', q: "Data nilai: 7, 8, 8, 9, 7, 6, 9, 8. Modusnya adalah?", options: ["7", "8", "9", "6"], answer: 1, explanation: "Nilai 8 muncul paling sering (3 kali)." },
+            { type: 'mc', q: "Jika dalam piktogram 1 gambar Bintang mewakili 20 orang. Berapa nilai untuk 3 gambar Bintang?", options: ["20", "40", "60", "80"], answer: 2, explanation: "3 x 20 = 60 orang." },
+            { type: 'mc', q: "Rata-rata dari data: 4, 6, 5, 5 adalah...", options: ["4", "5", "6", "20"], answer: 1, explanation: "Total = 20. Jumlah data = 4. Rata-rata = 20 ÷ 4 = 5." },
+            { type: 'mc', q: "Untuk menentukan Median, langkah pertama yang WAJIB dilakukan adalah...", options: ["Menjumlahkan semua data", "Mencari data terbesar", "Mengurutkan data dari terkecil", "Membuat tabel"], answer: 2, explanation: "Data harus urut dulu baru bisa dicari tengahnya." },
+            { type: 'mc', q: "Diagram batang sangat cocok digunakan untuk...", options: ["Melihat persentase", "Membandingkan jumlah antar kategori", "Melihat lokasi", "Menghitung luas"], answer: 1, explanation: "Batang yang tinggi dan rendah memudahkan perbandingan." },
+            { type: 'mc', q: "Data: 10, 20, 30. Berapa Mean-nya?", options: ["10", "20", "30", "60"], answer: 1, explanation: "(10+20+30) ÷ 3 = 60 ÷ 3 = 20." },
+            { type: 'mc', q: "Siti ingin data yang ia sajikan terlihat naik turun perkembangannya. Sebaiknya Siti menggunakan...", options: ["Diagram Garis", "Tabel", "Piktogram", "Diagram Lingkaran"], answer: 0, explanation: "Diagram garis paling baik untuk melihat perkembangan (tren)." },
+            { type: 'mc', q: "Jika rata-rata nilai 5 siswa adalah 80, maka jumlah total nilai mereka adalah...", options: ["400", "85", "16", "40"], answer: 0, explanation: "Total = Rata-rata x Banyak Data = 80 x 5 = 400." },
+            { type: 'mc', q: "Modus dari data: 5, 5, 6, 6, 7 adalah...", options: ["5", "6", "7", "5 dan 6"], answer: 3, explanation: "5 dan 6 sama-sama muncul 2 kali (paling banyak)." },
+            { type: 'mc', q: "Median dari data ganjil: 6, 7, 8, 9, 10 adalah...", options: ["6", "7", "8", "9"], answer: 2, explanation: "Data sudah urut. Yang ditengah adalah 8." },
+            { type: 'mc', q: "Apa fungsi 'Turus' pada tabel?", options: ["Hiasan", "Membantu menghitung", "Menunjukkan total", "Tidak ada gunanya"], answer: 1, explanation: "Turus (lidi) membantu kita agar tidak lupa hitungan saat mendata." },
+            { type: 'mc', q: "Kelas 5A (20 anak, rata-rata 8) dan 5B (20 anak, rata-rata 9). Gabungannya?", options: ["8.5", "8", "9", "17"], answer: 0, explanation: "Karena jumlah anak sama: (8+9)÷2 = 8.5." },
+            // Short Answer
+            { type: 'sa', q: "Data: 2, 3, 7, 7, 8. Modusnya adalah ....", answer: "7", explanation: "7 muncul paling banyak (2 kali)." },
+            { type: 'sa', q: "Untuk mencari Mean, kita harus membagi jumlah seluruh data dengan .... data.", answer: "banyak", explanation: "Rumus Mean = Jumlah Data ÷ Banyak Data." },
+            { type: 'sa', q: "Data tinggi badan: 130, 135, 132. Urutan yang benar untuk mencari median adalah ....", answer: "130, 132, 135", explanation: "Harus dari kecil ke besar." },
+            { type: 'sa', q: "Jika 1 gambar buku = 10 buku. Maka 45 buku digambar dengan ... gambar.", answer: "4,5", explanation: "45 ÷ 10 = 4,5." },
+            { type: 'sa', q: "Nilai ulangan: 80, 90, 100. Rata-ratanya adalah ....", answer: "90", explanation: "(80+90+100)÷3 = 270÷3 = 90." }
+        ];
+
+        const quizContainer = document.getElementById('questions-container');
+        if (quizContainer) {
+            questions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-6 rounded-xl shadow-sm border border-gray-200 question-card";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-4"><span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded">Soal ${index + 1}</span></div>
+                    <p class="text-lg font-bold text-gray-800 mb-4">${item.q}</p>
+                `;
+                if (item.type === 'mc') {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = "space-y-2";
+                    item.options.forEach((opt, optIndex) => {
+                        optionsDiv.innerHTML += `<label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors"><input type="radio" name="q${index}" value="${optIndex}" class="form-radio text-indigo-600 h-5 w-5 mr-3"><span>${opt}</span></label>`;
+                    });
+                    div.appendChild(optionsDiv);
+                } else {
+                    div.innerHTML += `<input type="text" name="q${index}" placeholder="Ketik jawabanmu..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">`;
+                }
+                div.innerHTML += `<div id="feedback-${index}" class="hidden mt-4 p-4 rounded-lg text-sm"></div>`;
+                quizContainer.appendChild(div);
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let total = questions.length;
+            questions.forEach((item, index) => {
+                const feedbackEl = document.getElementById(`feedback-${index}`);
+                let isCorrect = false;
+                if (item.type === 'mc') {
+                    const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                    if (selected && parseInt(selected.value) === item.answer) isCorrect = true;
+                } else {
+                    const input = document.querySelector(`input[name="q${index}"]`);
+                    if (input) {
+                        let val = input.value.toLowerCase().trim().replace('.', ',');
+                        let correctVal = item.answer.toLowerCase();
+                        if (val === correctVal || val.includes(correctVal)) isCorrect = true;
+                    }
+                }
+                if(feedbackEl) {
+                    feedbackEl.classList.remove('hidden');
+                    if (isCorrect) {
+                        score++;
+                        feedbackEl.className = "mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-200";
+                        feedbackEl.innerHTML = `<strong><i class="fa-solid fa-check-circle"></i> Benar!</strong><br>${item.explanation}`;
+                    } else {
+                        feedbackEl.className = "mt-4 p-4 rounded-lg bg-red-50 text-red-800 border border-red-200";
+                        let ansText = item.type === 'mc' ? item.options[item.answer] : item.answer;
+                        feedbackEl.innerHTML = `<strong><i class="fa-solid fa-times-circle"></i> Salah.</strong> Jawaban: ${ansText}<br><em>${item.explanation}</em>`;
+                    }
+                }
+            });
+            document.getElementById('quiz-form').classList.add('hidden');
+            document.getElementById('result-container').classList.remove('hidden');
+            const finalScore = Math.round((score / total) * 100);
+            const scoreDisplay = document.getElementById('score-display');
+            let current = 0;
+            const timer = setInterval(() => { current++; scoreDisplay.innerText = current; if (current >= finalScore) clearInterval(timer); }, 20);
+            const fbText = document.getElementById('feedback-text');
+            if (finalScore >= 80) fbText.innerHTML = "Hebat! Kamu Jagoan Data! 🏆";
+            else if (finalScore >= 60) fbText.innerHTML = "Bagus! Teruslah Berlatih! 💪";
+            else fbText.innerHTML = "Jangan Menyerah! Pelajari Materi Lagi ya. 📚";
+        }
+
+        // --- 5. INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', function() {
+            setupRandomSimulation();
+            calculateStats();
+            updateSidebarVisuals(); // Initial lock state
+        });
+    </script>
+</body>
+</html>
