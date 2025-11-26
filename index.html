@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numerasiyu</title>
+    <title>Numerasiyu - Eksplorasi Data</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -19,6 +19,9 @@
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
+        .animate-spin-slow { animation: spin 3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
         /* Sidebar Navigation Styles */
         .nav-item {
             transition: all 0.2s;
@@ -63,13 +66,13 @@
 <body class="bg-gray-100 text-gray-800 h-screen flex overflow-hidden">
 
     <!-- SIDEBAR NAVIGATION -->
-    <aside class="w-64 bg-white shadow-xl z-20 flex flex-col hidden md:flex">
+    <aside class="w-64 bg-white shadow-xl z-20 flex flex-col hidden md:flex h-full">
         <div class="p-6 bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
             <div class="flex items-center gap-2 mb-1">
                 <i class="fa-solid fa-chart-pie text-2xl text-yellow-300"></i>
-                <h1 class="text-2xl font-bold">Jago Data</h1>
+                <h1 class="text-2xl font-bold">Numerasiyu</h1>
             </div>
-            <p class="text-xs text-blue-100">Kelas 5 SD</p>
+            <p class="text-xs text-blue-100">Fase C Kelas 5 Sekolah Dasar</p>
         </div>
         
         <nav class="flex-1 overflow-y-auto py-4" id="sidebar-nav">
@@ -89,10 +92,7 @@
                 <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-calculator"></i></span> 3. Pemusatan (3M)</span>
                 <i class="fa-solid fa-lock text-xs lock-icon"></i>
             </button>
-            <button onclick="tryNavigate('kuis')" class="nav-item w-full text-left px-6 py-4 font-bold flex items-center justify-between locked" id="nav-kuis">
-                <span class="flex items-center"><span class="w-8"><i class="fa-solid fa-graduation-cap"></i></span> Kuis HOTS</span>
-                <i class="fa-solid fa-lock text-xs lock-icon"></i>
-            </button>
+            <!-- REMOVED QUIZ MENU -->
         </nav>
 
         <div class="p-4 border-t bg-gray-50">
@@ -102,8 +102,8 @@
 
     <!-- MOBILE HEADER -->
     <div class="md:hidden fixed top-0 w-full bg-indigo-600 text-white z-50 p-4 flex justify-between items-center shadow-md">
-        <span class="font-bold text-lg"><i class="fa-solid fa-chart-pie mr-2 text-yellow-300"></i>Jago Data</span>
-        <button onclick="document.querySelector('aside').classList.toggle('hidden'); document.querySelector('aside').classList.toggle('absolute'); document.querySelector('aside').classList.toggle('h-full');" class="text-white focus:outline-none">
+        <span class="font-bold text-lg"><i class="fa-solid fa-chart-pie mr-2 text-yellow-300"></i>Numerasiyu</span>
+        <button onclick="toggleSidebar()" class="text-white focus:outline-none">
             <i class="fa-solid fa-bars text-2xl"></i>
         </button>
     </div>
@@ -119,7 +119,7 @@
                     <h2 class="text-4xl text-white font-bold relative z-10">Selamat Datang!</h2>
                 </div>
                 <div class="p-8 text-center space-y-6">
-                    <p class="text-xl text-gray-600">Halo Sobat Data! Siap berpetualang menjadi ahli statistik cilik? <br> Selesaikan setiap misi untuk membuka materi selanjutnya!</p>
+                    <p class="text-xl text-gray-600">Halo Sobat Numerasiyu! Siap berpetualang menjadi detektif cilik? <br> Selesaikan setiap misi untuk membuka materi selanjutnya!</p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                         <div class="p-4 bg-green-50 rounded-xl border border-green-200">
                             <i class="fa-solid fa-magnifying-glass text-3xl text-green-500 mb-2"></i>
@@ -150,7 +150,7 @@
             <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-green-500">
                 <h2 class="text-2xl font-bold text-green-700 mb-4"><i class="fa-solid fa-book mr-2"></i>Apa itu Data?</h2>
                 <p class="text-lg leading-relaxed text-gray-700 mb-4">
-                    **Data** adalah kumpulan informasi atau fakta yang benar dan nyata. Data ibarat "bahan mentah" yang belum diolah.
+                    <strong>Data</strong> adalah kumpulan informasi atau fakta yang benar dan nyata. Data ibarat "bahan mentah" yang belum diolah.
                 </p>
                 
                 <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4">Jenis Data (Analogi Koki Restoran)</h3>
@@ -198,9 +198,7 @@
                             
                             <!-- YouTube Frame Container (Responsive) -->
                             <div class="relative pb-[56.25%] h-0 overflow-hidden rounded-lg bg-black shadow-inner">
-<iframe :src="https://github.com/yusril-ym/eksplorasi/blob/main/materi.m4v" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-</iframe>                             
-
+                                <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/Sj2M9yD3Cg4?si=example" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                             </div>
                             <p class="text-xs font-bold text-purple-600 mt-2 bg-purple-100 py-1 px-2 rounded inline-block">Kegiatan: Mencatat Data Siap Pakai</p>
                         </div>
@@ -229,7 +227,7 @@
                 
                 <!-- Data List Grid (Static Reference) -->
                 <div class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 text-sm" id="story-data-list">
-                   <!-- Will be populated by JS for consistency, or static -->
+                    <!-- Will be populated by JS for consistency, or static -->
                     <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-feather text-yellow-200 mr-2"></i>7 Elang Jawa</span>
                     <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-dove text-pink-200 mr-2"></i>15 Cendrawasih</span>
                     <span class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 flex items-center"><i class="fa-solid fa-dragon text-green-200 mr-2"></i>5 Iguana</span>
@@ -290,69 +288,60 @@
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                 <div class="bg-gray-800 p-4 text-white flex justify-between items-center">
                     <h3 class="font-bold text-lg"><i class="fa-solid fa-calculator mr-2"></i>Simulator Skor Tim Basket</h3>
-                    <span class="text-xs bg-gray-700 px-2 py-1 rounded">Edit angka di kartu!</span>
+                    <span class="text-xs bg-gray-700 px-2 py-1 rounded">Isi data sesukamu! (Max 9)</span>
                 </div>
                 <div class="p-6 md:p-8">
-                    <p class="mb-6 text-gray-600 text-center">Tim Basket SD Ceria bertanding 5 kali. Berikut adalah skor poin yang mereka peroleh. <br><strong>Ubah skornya untuk melihat perubahan Mean, Median, dan Modus!</strong></p>
-                    <div class="flex flex-wrap justify-center gap-4 mb-8">
-                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 1</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="6" oninput="calculateStats()"></div>
-                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 2</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="8" oninput="calculateStats()"></div>
-                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 3</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="6" oninput="calculateStats()"></div>
-                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 4</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="10" oninput="calculateStats()"></div>
-                        <div class="flex flex-col items-center"><span class="text-xs font-bold text-gray-400 mb-1">Match 5</span><input type="number" class="score-input w-20 h-24 text-4xl font-bold text-center border-2 border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="5" oninput="calculateStats()"></div>
+                    <p class="mb-6 text-gray-600 text-center">Masukkan skor pertandingan basket di bawah ini. <br><strong>Statistik akan dihitung otomatis hanya dari kotak yang terisi.</strong></p>
+                    
+                    <!-- Updated to 9 Inputs -->
+                    <div class="flex flex-wrap justify-center gap-3 mb-8">
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 1</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="6" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 2</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="8" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 3</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="6" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 4</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="10" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 5</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" value="5" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 6</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" placeholder="-" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 7</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" placeholder="-" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 8</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" placeholder="-" oninput="calculateStats()"></div>
+                        <div class="flex flex-col items-center"><span class="text-[10px] font-bold text-gray-400 mb-1">Data 9</span><input type="number" class="score-input w-16 h-20 text-3xl font-bold text-center border-2 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none text-indigo-600 bg-gray-50" placeholder="-" oninput="calculateStats()"></div>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200"><div class="text-xs uppercase font-bold text-blue-500 mb-1">Rata-rata (Mean)</div><div class="text-3xl font-black text-blue-700" id="res-mean">7</div><div class="text-xs text-blue-400 mt-2" id="res-mean-calc">Total 35 ÷ 5</div></div>
-                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-200"><div class="text-xs uppercase font-bold text-purple-500 mb-1">Nilai Tengah (Median)</div><div class="text-3xl font-black text-purple-700" id="res-median">6</div><div class="text-xs text-purple-400 mt-2" id="res-median-calc">Urutan: 5, 6, 6, 8, 10</div></div>
-                        <div class="p-4 bg-green-50 rounded-xl border border-green-200"><div class="text-xs uppercase font-bold text-green-500 mb-1">Terbanyak (Modus)</div><div class="text-3xl font-black text-green-700" id="res-modus">6</div><div class="text-xs text-green-400 mt-2" id="res-modus-calc">Muncul 2 kali</div></div>
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200"><div class="text-xs uppercase font-bold text-blue-500 mb-1">Rata-rata (Mean)</div><div class="text-3xl font-black text-blue-700" id="res-mean">0</div><div class="text-xs text-blue-400 mt-2" id="res-mean-calc">Menunggu data...</div></div>
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-200"><div class="text-xs uppercase font-bold text-purple-500 mb-1">Nilai Tengah (Median)</div><div class="text-3xl font-black text-purple-700" id="res-median">0</div><div class="text-xs text-purple-400 mt-2" id="res-median-calc">Menunggu data...</div></div>
+                        <div class="p-4 bg-green-50 rounded-xl border border-green-200"><div class="text-xs uppercase font-bold text-green-500 mb-1">Terbanyak (Modus)</div><div class="text-3xl font-black text-green-700" id="res-modus">-</div><div class="text-xs text-green-400 mt-2" id="res-modus-calc">Menunggu data...</div></div>
                     </div>
                 </div>
             </div>
 
             <!-- COMPLETION BUTTON FOR PEMUSATAN -->
             <div class="text-center mt-6">
-                <p class="mb-2 text-gray-500 text-sm">Sudah siap ujian?</p>
-                <button onclick="completeSection(3)" class="bg-purple-600 text-white px-8 py-3 rounded-full font-bold hover:bg-purple-700 transition transform hover:scale-105 shadow-lg flex items-center mx-auto">
-                    Siap, Lanjut ke Kuis! <i class="fa-solid fa-flag-checkered ml-2"></i>
+                <p class="mb-2 text-gray-500 text-sm">Selamat! Kamu sudah menyelesaikan materi.</p>
+                <!-- Updated button to indicate completion instead of next quiz -->
+                <button onclick="completeSection(3)" class="bg-yellow-500 text-white px-8 py-3 rounded-full font-bold hover:bg-yellow-600 transition transform hover:scale-105 shadow-lg flex items-center mx-auto">
+                    Selesai Belajar! <i class="fa-solid fa-check-circle ml-2"></i>
                 </button>
             </div>
         </section>
 
-        <!-- SECTION: KUIS -->
-        <section id="kuis" class="content-section hidden fade-in max-w-4xl mx-auto pb-10">
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div class="bg-indigo-600 p-6 text-white text-center">
-                    <h2 class="text-3xl font-bold mb-2"><i class="fa-solid fa-graduation-cap mr-2"></i>Kuis HOTS</h2>
-                    <p class="opacity-90">Uji pemahamanmu! Ingat materi yang sudah dipelajari.</p>
-                </div>
-                <div class="p-6 md:p-10 bg-gray-50">
-                    <form id="quiz-form" class="space-y-8">
-                        <div id="questions-container"></div>
-                        <div class="flex justify-center pt-6">
-                            <button type="button" onclick="submitQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-4 px-12 rounded-full shadow-lg transform transition hover:scale-105 flex items-center">
-                                <i class="fa-solid fa-paper-plane mr-3"></i> Kirim Jawaban
-                            </button>
-                        </div>
-                    </form>
-                    <div id="result-container" class="hidden mt-8 text-center space-y-6">
-                        <div class="inline-block p-6 rounded-full bg-white shadow-xl border-8 border-indigo-100">
-                            <div class="text-lg text-gray-500 uppercase font-bold tracking-widest">Skor Kamu</div>
-                            <div id="score-display" class="text-6xl font-black text-indigo-600">0</div>
-                            <div class="text-gray-400 text-sm">dari 100</div>
-                        </div>
-                        <div id="feedback-text" class="text-xl font-bold text-gray-700"></div>
-                        <button onclick="location.reload()" class="text-indigo-600 hover:underline font-bold">Coba Lagi</button>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- REMOVED QUIZ SECTION HTML -->
+
     </main>
 
     <script>
         // --- 0. LOCKING SYSTEM LOGIC ---
-        const sectionsOrder = ['intro', 'konsep', 'penyajian', 'pemusatan', 'kuis'];
+        // Removed 'kuis' from order
+        const sectionsOrder = ['intro', 'konsep', 'penyajian', 'pemusatan'];
         // Get progress from storage or default to 0 (Only Intro Unlocked)
         let maxUnlocked = parseInt(localStorage.getItem('jagoDataProgress')) || 0;
+
+        function toggleSidebar() {
+            const aside = document.querySelector('aside');
+            aside.classList.toggle('hidden');
+            aside.classList.toggle('fixed');
+            aside.classList.toggle('inset-0');
+            aside.classList.toggle('z-40');
+        }
 
         function updateSidebarVisuals() {
             sectionsOrder.forEach((secId, index) => {
@@ -379,6 +368,11 @@
             const index = sectionsOrder.indexOf(sectionId);
             if (index <= maxUnlocked) {
                 showSection(sectionId);
+                // Close sidebar on mobile if open
+                const aside = document.querySelector('aside');
+                if(aside.classList.contains('fixed')) {
+                    toggleSidebar();
+                }
             } else {
                 // Optional: Add a shake animation or tooltip saying "Locked"
                 const btn = document.getElementById('nav-' + sectionId);
@@ -391,13 +385,19 @@
             // Unlock next section
             if (currentIndex >= maxUnlocked) {
                 maxUnlocked = currentIndex + 1;
+                // Cap maxUnlocked at available sections
                 if(maxUnlocked >= sectionsOrder.length) maxUnlocked = sectionsOrder.length - 1;
                 localStorage.setItem('jagoDataProgress', maxUnlocked);
                 updateSidebarVisuals();
             }
-            // Auto navigate to next
+            
+            // Navigate logic
             if (currentIndex + 1 < sectionsOrder.length) {
                 showSection(sectionsOrder[currentIndex + 1]);
+            } else {
+                // If it's the last section (Pemusatan), go back to Intro/Home or show alert
+                alert("Selamat! Kamu telah menyelesaikan semua materi.");
+                showSection('intro');
             }
         }
 
@@ -526,8 +526,9 @@
                              <div class="h-56 flex items-center justify-center -mr-1">
                                 <span class="text-[10px] font-bold text-gray-600 -rotate-90 whitespace-nowrap w-4">Frekuensi Data</span>
                              </div>
-                            <div class="flex flex-col justify-between h-56 text-[10px] text-gray-600 text-right pr-2 pb-6 pt-2 w-8">
-                                <span>20</span><span>15</span><span>10</span><span>5</span><span>0</span>
+                            <!-- Dynamic Y-Axis Labels Container -->
+                            <div id="y-axis-labels" class="flex flex-col justify-between h-56 text-[10px] text-gray-600 text-right pr-2 pb-6 pt-2 w-8 transition-all duration-300">
+                                <!-- Labels injected by JS -->
                             </div>
                             <div class="flex-1 h-56 relative">
                                  <div class="absolute top-2 left-0 w-full h-[calc(100%-1.5rem)] flex flex-col justify-between pointer-events-none z-0">
@@ -557,12 +558,33 @@
 
         function updateCharts() {
             if(currentMission.length === 0) return;
+            
+            // 1. Get Values
             let values = currentMission.map(animal => {
                 const el = document.getElementById(`input-${animal.id}`);
                 return el ? parseInt(el.value) || 0 : 0;
             });
-            const maxVal = Math.max(...values, 20);
 
+            // 2. Calculate Dynamic Ceiling (Top of Y Axis)
+            // Round up to nearest 4 to make the 4 grid intervals represent integer values
+            const maxInput = Math.max(...values);
+            let chartCeiling = Math.ceil(maxInput / 4) * 4; 
+            if (chartCeiling < 4) chartCeiling = 4; // Minimum scale
+
+            // 3. Update Y-Axis Labels
+            const yAxisContainer = document.getElementById('y-axis-labels');
+            if (yAxisContainer) {
+                let labelsHTML = '';
+                // Generate 5 tick labels (Top, 75%, 50%, 25%, 0)
+                for (let i = 4; i >= 0; i--) {
+                    let labelVal = (chartCeiling / 4) * i;
+                    // Format number: remove .0 if integer
+                    labelsHTML += `<span>${Number.isInteger(labelVal) ? labelVal : labelVal.toFixed(1).replace('.0','')}</span>`;
+                }
+                yAxisContainer.innerHTML = labelsHTML;
+            }
+
+            // 4. Update Bars & Other elements
             currentMission.forEach((animal, index) => {
                 const val = values[index];
                 const valEl = document.getElementById(`val-${animal.id}`);
@@ -573,7 +595,7 @@
                 if(pictoEl) pictoEl.innerHTML = generateIcons(`fa-solid ${animal.icon} text-${animal.tailwind}-500`, val);
                 const barEl = document.getElementById(`bar-${animal.id}`);
                 if(barEl) {
-                    const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                    const pct = chartCeiling > 0 ? (val / chartCeiling) * 100 : 0;
                     barEl.style.height = pct + "%";
                     barEl.querySelector('span').innerText = val;
                 }
@@ -601,23 +623,59 @@
         function calculateStats() {
             const inputs = document.querySelectorAll('.score-input');
             let values = [];
-            inputs.forEach(input => values.push(parseInt(input.value) || 0));
+            
+            // Hanya ambil input yang tidak kosong (agar pembagi Mean sesuai jumlah data yang diisi)
+            inputs.forEach(input => {
+                if(input.value.trim() !== "") {
+                    values.push(parseInt(input.value));
+                }
+            });
 
+            // Jika tidak ada data
+            if (values.length === 0) {
+                document.getElementById('res-mean').innerText = "0";
+                document.getElementById('res-mean-calc').innerText = "Belum ada data";
+                document.getElementById('res-median').innerText = "0";
+                document.getElementById('res-median-calc').innerText = "-";
+                document.getElementById('res-modus').innerText = "-";
+                document.getElementById('res-modus-calc').innerText = "-";
+                return;
+            }
+
+            // MEAN
             const sum = values.reduce((a, b) => a + b, 0);
-            const mean = values.length > 0 ? (sum / values.length).toFixed(1).replace('.0', '') : 0;
+            const mean = (sum / values.length).toFixed(1).replace('.0', '');
             document.getElementById('res-mean').innerText = mean;
-            document.getElementById('res-mean-calc').innerText = `Total ${sum} ÷ ${values.length}`;
+            document.getElementById('res-mean-calc').innerText = `Total ${sum} ÷ ${values.length} Data`;
 
+            // MEDIAN
             const sorted = [...values].sort((a, b) => a - b);
             let median = 0;
-            if (sorted.length > 0) {
-                const mid = Math.floor(sorted.length / 2);
-                if (sorted.length % 2 !== 0) median = sorted[mid];
-                else median = (sorted[mid - 1] + sorted[mid]) / 2;
-            }
-            document.getElementById('res-median').innerText = median;
-            document.getElementById('res-median-calc').innerText = `Urutan: ${sorted.join(', ')}`;
+            const n = sorted.length;
+            const mid = Math.floor(n / 2);
+            let medianDesc = "";
 
+            if (n % 2 !== 0) {
+                // Ganjil
+                median = sorted[mid];
+                medianDesc = `(Ganjil) Ambil data ke-${mid + 1}`;
+            } else {
+                // Genap
+                median = (sorted[mid - 1] + sorted[mid]) / 2;
+                medianDesc = `(Genap) (${sorted[mid - 1]} + ${sorted[mid]}) ÷ 2`;
+            }
+            // Format median display (remove decimal if integer)
+            const medianDisplay = Number.isInteger(median) ? median : median.toFixed(1).replace('.0','');
+            
+            document.getElementById('res-median').innerText = medianDisplay;
+            // Tampilkan urutan data, jika terlalu panjang potong
+            let sortedStr = sorted.join(', ');
+            if(sortedStr.length > 20) sortedStr = sorted.slice(0, 5).join(', ') + '...';
+            
+            // Tampilkan urutan DAN penjelasan rumus
+            document.getElementById('res-median-calc').innerHTML = `Urutan: ${sortedStr}<br><span class="font-bold text-purple-600 text-[10px]">${medianDesc}</span>`;
+
+            // MODUS
             const frequency = {};
             let maxFreq = 0;
             let modes = [];
@@ -631,102 +689,11 @@
             
             if (maxFreq <= 1 && values.length > 1 && new Set(values).size === values.length) {
                  document.getElementById('res-modus').innerText = "-";
-                 document.getElementById('res-modus-calc').innerText = "Tidak ada (semua sama)";
+                 document.getElementById('res-modus-calc').innerText = "Semua muncul 1 kali";
             } else {
                 document.getElementById('res-modus').innerText = modes.join(', ');
                 document.getElementById('res-modus-calc').innerText = `Muncul ${maxFreq} kali`;
             }
-        }
-
-        // --- 4. QUIZ LOGIC ---
-        const questions = [
-            { type: 'mc', q: "Andi mengukur tinggi badan adiknya sendiri menggunakan meteran. Data yang diperoleh Andi termasuk...", options: ["Data Sekunder", "Data Primer", "Data Tersier", "Data Laporan"], answer: 1, explanation: "Karena Andi mengambil data itu sendiri secara langsung (seperti Koki memetik tomat)." },
-            { type: 'mc', q: "Manakah di bawah ini yang merupakan contoh Data Sekunder?", options: ["Mewawancarai pedagang pasar", "Menghitung jumlah mobil yang lewat", "Mencatat ulang data absensi dari buku guru", "Mengukur suhu air dengan termometer"], answer: 2, explanation: "Menyalin dari buku guru berarti sumbernya sudah ada (Sekunder)." },
-            { type: 'mc', q: "Berdasarkan data panen: 2019 (40), 2020 (55), 2021 (35), 2022 (60). Pernyataan yang SALAH adalah...", options: ["Panen terendah tahun 2021", "Terjadi penurunan dari 2020 ke 2021", "Panen tertinggi tahun 2019", "Total panen 2020 dan 2021 adalah 90"], answer: 2, explanation: "Panen tertinggi adalah tahun 2022 (60), bukan 2019 (40)." },
-            { type: 'mc', q: "Data nilai: 7, 8, 8, 9, 7, 6, 9, 8. Modusnya adalah?", options: ["7", "8", "9", "6"], answer: 1, explanation: "Nilai 8 muncul paling sering (3 kali)." },
-            { type: 'mc', q: "Jika dalam piktogram 1 gambar Bintang mewakili 20 orang. Berapa nilai untuk 3 gambar Bintang?", options: ["20", "40", "60", "80"], answer: 2, explanation: "3 x 20 = 60 orang." },
-            { type: 'mc', q: "Rata-rata dari data: 4, 6, 5, 5 adalah...", options: ["4", "5", "6", "20"], answer: 1, explanation: "Total = 20. Jumlah data = 4. Rata-rata = 20 ÷ 4 = 5." },
-            { type: 'mc', q: "Untuk menentukan Median, langkah pertama yang WAJIB dilakukan adalah...", options: ["Menjumlahkan semua data", "Mencari data terbesar", "Mengurutkan data dari terkecil", "Membuat tabel"], answer: 2, explanation: "Data harus urut dulu baru bisa dicari tengahnya." },
-            { type: 'mc', q: "Diagram batang sangat cocok digunakan untuk...", options: ["Melihat persentase", "Membandingkan jumlah antar kategori", "Melihat lokasi", "Menghitung luas"], answer: 1, explanation: "Batang yang tinggi dan rendah memudahkan perbandingan." },
-            { type: 'mc', q: "Data: 10, 20, 30. Berapa Mean-nya?", options: ["10", "20", "30", "60"], answer: 1, explanation: "(10+20+30) ÷ 3 = 60 ÷ 3 = 20." },
-            { type: 'mc', q: "Siti ingin data yang ia sajikan terlihat naik turun perkembangannya. Sebaiknya Siti menggunakan...", options: ["Diagram Garis", "Tabel", "Piktogram", "Diagram Lingkaran"], answer: 0, explanation: "Diagram garis paling baik untuk melihat perkembangan (tren)." },
-            { type: 'mc', q: "Jika rata-rata nilai 5 siswa adalah 80, maka jumlah total nilai mereka adalah...", options: ["400", "85", "16", "40"], answer: 0, explanation: "Total = Rata-rata x Banyak Data = 80 x 5 = 400." },
-            { type: 'mc', q: "Modus dari data: 5, 5, 6, 6, 7 adalah...", options: ["5", "6", "7", "5 dan 6"], answer: 3, explanation: "5 dan 6 sama-sama muncul 2 kali (paling banyak)." },
-            { type: 'mc', q: "Median dari data ganjil: 6, 7, 8, 9, 10 adalah...", options: ["6", "7", "8", "9"], answer: 2, explanation: "Data sudah urut. Yang ditengah adalah 8." },
-            { type: 'mc', q: "Apa fungsi 'Turus' pada tabel?", options: ["Hiasan", "Membantu menghitung", "Menunjukkan total", "Tidak ada gunanya"], answer: 1, explanation: "Turus (lidi) membantu kita agar tidak lupa hitungan saat mendata." },
-            { type: 'mc', q: "Kelas 5A (20 anak, rata-rata 8) dan 5B (20 anak, rata-rata 9). Gabungannya?", options: ["8.5", "8", "9", "17"], answer: 0, explanation: "Karena jumlah anak sama: (8+9)÷2 = 8.5." },
-            // Short Answer
-            { type: 'sa', q: "Data: 2, 3, 7, 7, 8. Modusnya adalah ....", answer: "7", explanation: "7 muncul paling banyak (2 kali)." },
-            { type: 'sa', q: "Untuk mencari Mean, kita harus membagi jumlah seluruh data dengan .... data.", answer: "banyak", explanation: "Rumus Mean = Jumlah Data ÷ Banyak Data." },
-            { type: 'sa', q: "Data tinggi badan: 130, 135, 132. Urutan yang benar untuk mencari median adalah ....", answer: "130, 132, 135", explanation: "Harus dari kecil ke besar." },
-            { type: 'sa', q: "Jika 1 gambar buku = 10 buku. Maka 45 buku digambar dengan ... gambar.", answer: "4,5", explanation: "45 ÷ 10 = 4,5." },
-            { type: 'sa', q: "Nilai ulangan: 80, 90, 100. Rata-ratanya adalah ....", answer: "90", explanation: "(80+90+100)÷3 = 270÷3 = 90." }
-        ];
-
-        const quizContainer = document.getElementById('questions-container');
-        if (quizContainer) {
-            questions.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-6 rounded-xl shadow-sm border border-gray-200 question-card";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center mb-4"><span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded">Soal ${index + 1}</span></div>
-                    <p class="text-lg font-bold text-gray-800 mb-4">${item.q}</p>
-                `;
-                if (item.type === 'mc') {
-                    const optionsDiv = document.createElement('div');
-                    optionsDiv.className = "space-y-2";
-                    item.options.forEach((opt, optIndex) => {
-                        optionsDiv.innerHTML += `<label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors"><input type="radio" name="q${index}" value="${optIndex}" class="form-radio text-indigo-600 h-5 w-5 mr-3"><span>${opt}</span></label>`;
-                    });
-                    div.appendChild(optionsDiv);
-                } else {
-                    div.innerHTML += `<input type="text" name="q${index}" placeholder="Ketik jawabanmu..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">`;
-                }
-                div.innerHTML += `<div id="feedback-${index}" class="hidden mt-4 p-4 rounded-lg text-sm"></div>`;
-                quizContainer.appendChild(div);
-            });
-        }
-
-        function submitQuiz() {
-            let score = 0;
-            let total = questions.length;
-            questions.forEach((item, index) => {
-                const feedbackEl = document.getElementById(`feedback-${index}`);
-                let isCorrect = false;
-                if (item.type === 'mc') {
-                    const selected = document.querySelector(`input[name="q${index}"]:checked`);
-                    if (selected && parseInt(selected.value) === item.answer) isCorrect = true;
-                } else {
-                    const input = document.querySelector(`input[name="q${index}"]`);
-                    if (input) {
-                        let val = input.value.toLowerCase().trim().replace('.', ',');
-                        let correctVal = item.answer.toLowerCase();
-                        if (val === correctVal || val.includes(correctVal)) isCorrect = true;
-                    }
-                }
-                if(feedbackEl) {
-                    feedbackEl.classList.remove('hidden');
-                    if (isCorrect) {
-                        score++;
-                        feedbackEl.className = "mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-200";
-                        feedbackEl.innerHTML = `<strong><i class="fa-solid fa-check-circle"></i> Benar!</strong><br>${item.explanation}`;
-                    } else {
-                        feedbackEl.className = "mt-4 p-4 rounded-lg bg-red-50 text-red-800 border border-red-200";
-                        let ansText = item.type === 'mc' ? item.options[item.answer] : item.answer;
-                        feedbackEl.innerHTML = `<strong><i class="fa-solid fa-times-circle"></i> Salah.</strong> Jawaban: ${ansText}<br><em>${item.explanation}</em>`;
-                    }
-                }
-            });
-            document.getElementById('quiz-form').classList.add('hidden');
-            document.getElementById('result-container').classList.remove('hidden');
-            const finalScore = Math.round((score / total) * 100);
-            const scoreDisplay = document.getElementById('score-display');
-            let current = 0;
-            const timer = setInterval(() => { current++; scoreDisplay.innerText = current; if (current >= finalScore) clearInterval(timer); }, 20);
-            const fbText = document.getElementById('feedback-text');
-            if (finalScore >= 80) fbText.innerHTML = "Hebat! Kamu Jagoan Data! 🏆";
-            else if (finalScore >= 60) fbText.innerHTML = "Bagus! Teruslah Berlatih! 💪";
-            else fbText.innerHTML = "Jangan Menyerah! Pelajari Materi Lagi ya. 📚";
         }
 
         // --- 5. INITIALIZATION ---
